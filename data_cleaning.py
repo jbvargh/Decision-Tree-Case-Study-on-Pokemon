@@ -1,26 +1,5 @@
 import pandas as pd
 
-def multipliers(type_1, type_2):
-    out = {}
-    for t in types:
-        m = TYPE_CHART[t].get(type_1, 1.0)
-        if pd.notna(type_2):
-            m *= TYPE_CHART[t].get(type_2, 1.0)
-        out[t] = m
-    return out
-
-df = pd.read_csv("pokemon_dataset/pokemon_complete_2025.csv")
-
-keep = ['name', 'generation', 'type_1', 'type_2', 'is_dual_type', 'is_legendary', 'is_mythical']
-df = df[keep]
-
-roman = {'I':1,'II':2,'III':3,'IV':4,'V':5,'VI':6,'VII':7,'VIII':8,'IX':9}
-df['generation'] = df['generation'].map(roman)
-
-types = sorted(set(df['type_1']) | set(df['type_2'].dropna()))   # the 18, straight from the data
-for t in types:
-    df[f'is_{t}'] = (df['type_1'] == t) | (df['type_2'] == t)
-
 TYPE_CHART = {
     'normal':   {'rock':0.5,'ghost':0.0,'steel':0.5},
     'fire':     {'fire':0.5,'water':0.5,'grass':2.0,'ice':2.0,'bug':2.0,'rock':0.5,'dragon':0.5,'steel':2.0},
@@ -41,6 +20,31 @@ TYPE_CHART = {
     'steel':    {'fire':0.5,'water':0.5,'electric':0.5,'ice':2.0,'rock':2.0,'steel':0.5,'fairy':2.0},
     'fairy':    {'fire':0.5,'fighting':2.0,'poison':0.5,'dragon':2.0,'dark':2.0,'steel':0.5},
 }
+
+def multipliers(type_1, type_2):
+    out = {}
+    for t in types:
+        m = TYPE_CHART[t].get(type_1, 1.0)
+        if pd.notna(type_2):
+            m *= TYPE_CHART[t].get(type_2, 1.0)
+        out[t] = m
+    return out
+
+df = pd.read_csv("pokemon_dataset/pokemon_complete_2025.csv")
+
+keep = ['name', 'generation', 'type_1', 'type_2', 'is_dual_type', 'is_legendary', 'is_mythical', 'is_baby']
+df = df[keep]
+
+roman = {'I':1,'II':2,'III':3,'IV':4,'V':5,'VI':6,'VII':7,'VIII':8,'IX':9}
+df['generation'] = df['generation'].map(roman)
+for g in range(1, 10):
+    df[f'is_gen{g}'] = (df['generation'] == g)
+
+df['gen_5_to_9'] = df['generation'].between(5, 9)
+
+types = sorted(set(df['type_1']) | set(df['type_2'].dropna()))   # the 18, straight from the data
+for t in types:
+    df[f'is_{t}'] = (df['type_1'] == t) | (df['type_2'] == t)
 
 mult_df = df.apply(lambda row: multipliers(row['type_1'], row['type_2']), axis=1)
 mult_df = pd.DataFrame(mult_df.tolist(), index=df.index)
