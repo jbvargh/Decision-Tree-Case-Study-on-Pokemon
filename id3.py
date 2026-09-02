@@ -1,5 +1,6 @@
 import math
 import pandas as pd
+import pickle
 def entropy(group):
     map = {}
     for pokemon in group:
@@ -41,9 +42,15 @@ def build_tree(df, features):
         return df['name'].tolist()
     return {'question': winner, True: build_tree(df[df[winner]], features), False: build_tree(df[~df[winner]], features)}
 
-df = pd.read_csv("features.csv")
-exclude = {'name', 'type_1', 'type_2', 'generation'}
-features = [c for c in df.columns if c not in exclude]
-tree = build_tree(df, features)
+def classify(node):
+    while isinstance(node, dict):          # dict = a question; keep walking
+        ans = input(node['question'] + "? (y/n) ").strip().lower() == 'y'
+        node = node[ans]                    # go to the True or False branch
+    return node     
 
-print(tree['question'])              # the root question ID3 chose
+if __name__ == "__main__":
+    df = pd.read_csv("features.csv")
+    features = [c for c in df.columns if c not in {'name','type_1','type_2','generation'}]
+    tree = build_tree(df, features)
+    with open("tree.pkl", "wb") as f:
+        pickle.dump(tree, f)
