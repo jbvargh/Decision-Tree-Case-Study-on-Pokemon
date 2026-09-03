@@ -6,6 +6,7 @@ ENV/
 
 # Python
 tree.pkl
+features.csv
 __pycache__/
 *.py[cod]
 *$py.class
