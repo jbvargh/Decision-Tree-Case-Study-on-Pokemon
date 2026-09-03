@@ -42,7 +42,7 @@ for g in range(1, 10):
 
 df['gen_5_to_9'] = df['generation'].between(5, 9)
 
-types = sorted(set(df['type_1']) | set(df['type_2'].dropna()))   # the 18, straight from the data
+types = sorted(set(df['type_1']) | set(df['type_2'].dropna()))
 for t in types:
     df[f'is_{t}'] = (df['type_1'] == t) | (df['type_2'] == t)
 
