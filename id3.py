@@ -2,12 +2,12 @@ import math
 import pandas as pd
 import pickle
 def entropy(group):
-    map = {}
+    counts = {}
     for pokemon in group:
-        map[pokemon] = map.get(pokemon, 0) + 1
+        counts[pokemon] = counts.get(pokemon, 0) + 1
     result = 0
-    for poke in map:
-        ratio = map.get(poke)/len(group)
+    for poke in counts:
+        ratio = counts.get(poke)/len(group)
         result = result - (ratio * math.log2(ratio))
     return result
 
@@ -43,9 +43,9 @@ def build_tree(df, features):
     return {'question': winner, True: build_tree(df[df[winner]], features), False: build_tree(df[~df[winner]], features)}
 
 def classify(node):
-    while isinstance(node, dict):          # dict = a question; keep walking
+    while isinstance(node, dict):
         ans = input(node['question'] + "? (y/n) ").strip().lower() == 'y'
-        node = node[ans]                    # go to the True or False branch
+        node = node[ans]
     return node     
 
 if __name__ == "__main__":
