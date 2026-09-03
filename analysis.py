@@ -25,11 +25,11 @@ def count_trapped(node):
     return count_trapped(node[True]) + count_trapped(node[False])
 
 counts = [find_question_length(tree, row) for _, row in df.iterrows()]
-print("average:", sum(counts) / len(counts))
-print("max:", max(counts), " min:", min(counts))
+print("average question length:", sum(counts) / len(counts))
+print("max questions asked:", max(counts), " min questions asked:", min(counts))
 
-print(count_collisions(tree))
-print(count_trapped(tree))
+print("number of groups with 2 or more Pokemon: ", count_collisions(tree))
+print("number of Pokemon in those groups", count_trapped(tree))
 
 def collect_groups(node):
     if not isinstance(node, dict):
